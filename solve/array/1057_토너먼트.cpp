@@ -32,16 +32,23 @@ struct point {
 int t;
 int n, m;
 
-
 int main() {
         ios_base::sync_with_stdio(false);
         cin.tie(NULL);
-        int* p = (int*)malloc(4);
-        srand(*p);//현재시간을 이용해 매순간 다른 난수
-        cnt = rand() % 10;//0,1,2
-        if(cnt%2==1)
-                cout<<"Korea";
-        else
-                cout<<"Yonsei";
+        int a[5]={0,};
+        for(int i=0; i<5; i++) {
+                for(int j=0; j<4; j++) {
+                        int b;
+                        cin>>b;
+                        a[i]+=b;
+                }
+        }
+        n=0;
+        for(int i=1; i<5; i++) {
+                if(a[n]<a[i]) {
+                        n=i;
+                }
+        }
+        cout<<n+1<<' '<<a[n];
         return 0;
 }

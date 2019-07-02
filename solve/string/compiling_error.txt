@@ -1,0 +1,9 @@
+D:\junho\git\solve\string\10212_Mystery.cpp:3:12: warning: character constant too long for its type
+ vallist = ['Korea', 'Yonsei']
+            ^~~~~~~
+D:\junho\git\solve\string\10212_Mystery.cpp:3:21: warning: character constant too long for its type
+ vallist = ['Korea', 'Yonsei']
+                     ^~~~~~~~
+D:\junho\git\solve\string\10212_Mystery.cpp:1:1: error: 'import' does not name a type
+ import random
+ ^~~~~~
