@@ -10,6 +10,7 @@
 #include <string>
 #include <stdlib.h>
 #include <time.h>
+#include <set>
 #define ll long long
 #define pii pair<int,int>
 using namespace std;
@@ -35,20 +36,20 @@ int n, m;
 int main() {
         ios_base::sync_with_stdio(false);
         cin.tie(NULL);
-        int a[5]={0,};
-        for(int i=0; i<5; i++) {
-                for(int j=0; j<4; j++) {
-                        int b;
-                        cin>>b;
-                        a[i]+=b;
+        string a;
+        double g;
+        cin>>a;
+        if(a[0]=='F')
+                g=0.0;
+        else{
+                g='D'-a[0]+1;
+                if(a[1]=='+')
+                        g+=0.3;
+                else if(a[1]=='-') {
+                        g-=0.3;
                 }
         }
-        n=0;
-        for(int i=1; i<5; i++) {
-                if(a[n]<a[i]) {
-                        n=i;
-                }
-        }
-        cout<<n+1<<' '<<a[n];
+        cout<<fixed<<setprecision(1)<<g;
+
         return 0;
 }
