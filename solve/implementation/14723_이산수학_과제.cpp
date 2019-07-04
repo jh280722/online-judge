@@ -25,18 +25,16 @@ int n, m, k;
 int main() {
         ios_base::sync_with_stdio(false);
         cin.tie(NULL);
-        cin>>t;
-        while(t--) {
-                string a,b;
-                cin>>a>>b;
-                cout<<"Distances: ";
-                for(int i=0; i<a.length(); i++) {
-                        int d=b[i]-a[i];
-                        if(d<0)
-                                d+=26;
-                        cout<<d<<' ';
-                }
-                cout<<'\n';
+        int sum=0;
+        int groupcnt = 1;
+        cin >> n;
+        while(sum + groupcnt < n)
+        {
+                sum+=groupcnt;
+                groupcnt++;
         }
+        int diff = n - sum;
+        cout << groupcnt - diff + 1 << " " << diff;
+
         return 0;
 }

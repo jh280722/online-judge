@@ -31,11 +31,21 @@ int main() {
                         cin>>a2[i][j];
                 }
         }
-        int r[500],c[500];
+        vector<int> r(n),c(m);
         for(int i=0; i<n; i++) {
                 for(int j=0; j<m; j++) {
-                        cin>>a2[i][j];
+                        string s=to_string(a2[i][j]);
+                        for(char v:s) {
+                                if(v=='9') {
+                                        r[i]++;
+                                        c[j]++;
+                                }
+                        }
                 }
         }
+        int rmax=*max_element(r.begin(),r.end());
+        int cmax=*max_element(c.begin(),c.end());
+        int rcmax=max(rmax, cmax);
+        cout<<accumulate(r.begin(), r.end(), 0)-rcmax;
         return 0;
 }
