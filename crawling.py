@@ -2,6 +2,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
+path = "./new/"
 url2 = ["https://snshealth.ansan.go.kr/hcGuide/maternalChildhood/ChildbirthEncouragement.jsp?menuId=06004012"]
 url = ["http://snshealth.ansan.go.kr/hcGuide/fundholding/Fundholding.jsp?menuId=06004039",
        "http://snshealth.ansan.go.kr/hcGuide/fundholding/Obstinacy.jsp?menuId=06004039", "http://snshealth.ansan.go.kr/hcGuide/fundholding/Hepatitis.jsp?menuId=06004039", "http://snshealth.ansan.go.kr/hcGuide/fundholding/Premature.jsp?menuId=06004039", "http://snshealth.ansan.go.kr/hcGuide/fundholding/Apriority.jsp?menuId=06004039",
@@ -54,9 +55,7 @@ def tab_menu(name, class_, submain, contents):
 
 def btn(name, class_, submain, contents):
     if submain.name == name and submain.get('class') == class_:
-        print(submain)
         for i in submain.select("li"):
-            print(i)
             i = i.find("a")
             contents.append('<a title="새창" target="_blank" class="btn" href="'
                             + i.get('href') + '">' + i.text
@@ -65,6 +64,29 @@ def btn(name, class_, submain, contents):
         return True
     return False
 # regex를 반복적으로 할 수 있게 해주는 함수(ex : list)
+
+
+def make_caption(submain, contents):
+    if "<caption></caption>" in str(submain):
+        submain = str(submain)
+        regex = re.compile(r'<th scope="col"[^>]*>([^<]*)</th[^>]*>')
+        # <th scope="col"[^>]*>([^<]*)</th[^>]*>')
+        thcols = regex.findall(submain)
+        caption = []
+        for i in thcols:
+            l = len(i) - 1
+            while l >= 0:
+                if i[l] == '|' or i[l] == ' ' or i[l] == '\n':
+                    t = i
+                    i = t[0: l]
+                    i += t[l + 1: len(t)]
+                l = l - 1
+            caption.append(i)
+        con = "<caption> - " + ", ".join(caption) + " 순으로 내용을 전달합니다.</caption>"
+        submain = re.sub('<caption></caption>', con, submain)
+        contents.append(submain)
+        return True
+    return False
 
 
 def loop_sub(regex, sub, str, min, max, wrap_sub='{}'):
@@ -137,55 +159,43 @@ def make_templete(html, select_name):
     content = re.sub('<dl[^\<>]*>', '<ul class="bu">', content)
     content = re.sub('</dl[^\<>]*>', '</ul>', content)
     content = re.sub('(<ul[^>]*>)\s*(<h4>[^<]*</h4>)', '\g<2>\n\g<1>', content)
-
+    # <[^a]|[^<]a|[^<][^a])* <a를 제외한 모든 문자열
+    # (?:(?!문자열)[\s\S])* 문자열을 제외한 모든 문자열
+    content = re.sub('<a[^>]*(href="[^"]*")[^>/]*>',
+                     '<a title="새창" target="_blank" class="blank" \g<1>>', content)
+    content = re.sub('<a[^>]*(href="[^"]*")[^>/]*>',
     # 이미지 박스 생성
-    content = re.sub(
+    content=re.sub(
         '(<img[^>]*>)', '\n<span class="temp_imagebox">\n<span class="image">\g<1></span>\n</span>', content)
 
     # table 수정
-    content = re.sub('<table[^</>]*>', '<table class="table">', content)
-    content = re.sub('(<table[^</>]*>)\s*(?!<caption>)', '\g<1>\n<caption></caption>\n', content)
+    content=re.sub('<table[^</>]*>', '<table class="table">', content)
+    content=re.sub('(<table[^</>]*>)\s*(?!\<caption\>)', '\g<1>\n<caption></caption>\n', content)
     # table scope 달기
-    content = re.sub('<th(?!ead)([^>]*)>', '<th scope="col" \g<1>>', content)
-    content = re.sub('(<th[^>]*>)\s*<strong>([^<]*)</strong>\s*</th>', '\g<1>\g<2></th>', content)
-    content = re.sub('<th scope="col"([^>]*)>\s*([^<]*)\s*</th[^>]*>\s*<td([^>]*)>',
+    content=re.sub('<th(?!ead)([^>]*)>', '<th scope="col" \g<1>>', content)
+    content=re.sub('(<th[^>]*>)\s*<strong>([^<]*)</strong>\s*</th>', '\g<1>\g<2></th>', content)
+    content=re.sub('<th scope="col"([^>]*)>\s*([^<]*)\s*</th[^>]*>\s*<td([^>]*)>',
                      '<th scope="row" \g<1>>\g<2></th>\n<td\g<3>>', content)
-    content = re.sub('(<td[^>]*>)\s*<p[^>]*>\s*([^<]*)\s*</p[^>]*>', '\g<1>\g<2>', content)
-    # caption 보류
-    # regex = re.compile(r'<table[^>]*>[.\s]*</table>')
-    # # <th scope="col"[^>]*>([^<]*)</th[^>]*>')
-    # thcols = regex.findall(content)
-    # capnum = []
-    # caption = []
-    # for i in thcols:
-    #     l = len(i) - 1
-    #     while l >= 0:
-    #         if i[l] == '|' or i[l] == ' ' or i[l] == '\n':
-    #             t = i
-    #             i = t[0: l]
-    #             i += t[l + 1: len(t)]
-    #         l = l - 1
-    #     caption.append(i)
-    # print(caption)
+    content=re.sub('(<td[^>]*>)\s*<p[^>]*>\s*([^<]*)\s*</p[^>]*>', '\g<1>\g<2>', content)
 
     # 라인 병합
-    content = re.sub('<([^>]*)>\s*([^<]*)\s*</([^>]*)>', '<\g<1>>\g<2></\g<3>>', content)
-    content = re.sub('\s+</([^>]*)>', '\n</\g<1>>', content)
-    content = re.sub('<([^>]*)>\s+', '<\g<1>>\n', content)
-    content = re.sub(
+    content=re.sub('<([^>]*)>\s*([^<]*)\s*</([^>]*)>', '<\g<1>>\g<2></\g<3>>', content)
+    content=re.sub('\s+</([^>]*)>', '\n</\g<1>>', content)
+    content=re.sub('<([^>]*)>\s+', '<\g<1>>\n', content)
+    content=re.sub(
         '<(strong|a|li|p|u|td|th|h3|h4|h5)( ?[^>]*)>\s*([^<\n]*)\s*</(strong|a|li|p|u|td|th|h3|h4|h5)>', '<\g<1>\g<2>>\g<3></\g<4>>', content)
 
     # 아무것도 없는 공백 라인 삭제
-    content = re.sub('(\n){2,}', '', content)
-    content = re.sub('(\r\n){2,}', '\n', content)
-    content = re.sub('(\n){2,}', '', content)
-    content = re.sub('(\r\n){2,}', '\n', content)
+    content=re.sub('(\n){2,}', '', content)
+    content=re.sub('(\r\n){2,}', '\n', content)
+    content=re.sub('(\n){2,}', '', content)
+    content=re.sub('(\r\n){2,}', '\n', content)
 
     # -여러개를 ul>li로 and 하나를 p로
-    content = loop_sub('(?:\n\s*[-ㆍ][ ]*(.*)\s*)', '<li>\g<1></li>\n',
+    content=loop_sub('(?:\n\s*[-ㆍ][ ]*(.*)\s*)', '<li>\g<1></li>\n',
                        content, 2, 10, '\n<ul>\n{}</ul>')
-    content = re.sub('(?:\n\s*[-ㆍ][ ]*(.*)\s*)', '\n<p>\g<1></p>\n', content)
-    content = re.sub('<ul[^>]*>\s*<li>([^<]*)</li>\s*</ul>', '<p class="blt">\g<1></p>', content)
+    content=re.sub('(?:\n\s*[-ㆍ][ ]*(.*)\s*)', '\n<p>\g<1></p>\n', content)
+    content=re.sub('<ul[^>]*>\s*<li>([^<]*)</li>\s*</ul>', '<p class="blt">\g<1></p>', content)
 
     # h4태그 및에 p태그 ul>li로 바꿈
     # content = loop_sub('\n<p>(.*?)</p>', '\n<li>\g<1></li>',
@@ -194,42 +204,38 @@ def make_templete(html, select_name):
 
 
 for u in url:
-    num = num + 1
-    r = requests.get(u)
-    c = r.content
-    html = BeautifulSoup(c, 'lxml')
-    content = make_templete(html, '.subMain')
-    content = BeautifulSoup(content, 'html.parser')
-    origin = content
-    loc = html.find("ul", class_="location")
-    loc = loc.find("li", class_="on").text
-    title = html.find(name="div", class_="subTop")
-    title = title.find(name="h3").find(name="span")
+    num=num + 1
+    r=requests.get(u)
+    c=r.content
+    html=BeautifulSoup(c, 'lxml')
+    content=make_templete(html, '.subMain')
+    content=BeautifulSoup(content, 'html.parser')
+    loc=html.find("ul", class_="location")
+    loc=loc.find("li", class_="on").text
+    title=html.find(name="div", class_="subTop")
+    title=title.find(name="h3").find(name="span")
     if title != None:
-        title = title.text
-        i = len(title) - 1
+        title=title.text
+        i=len(title) - 1
         while i >= 0:
             if title[i] == '|' or title[i] == ' ':
-                t = title
-                title = t[0: i]
+                t=title
+                title=t[0: i]
                 title += t[i + 1: len(t)]
-            i = i - 1
+            i=i - 1
     else:
-        title = num
+        title=num
 
-    contents = []
-    for submain in origin:
-        ch1 = False
-        ch2 = False
-        ch3 = False
-        ch4 = False
-        ch1 = tab_menu("ul", ['tabStyle'], submain, contents)
-        ch2 = tab_menu2("ul", ['ulStyle1', 'column4'], submain, contents)
-        ch3 = btn("ul", ['btnList'], submain, contents)
-        ch4 = btn("div", ['btnList3'], submain, contents)
-        if (not ch1) and (not ch2) and (not ch3) and (not ch4):
+    contents=[]
+    for submain in content:
+        ch1=tab_menu("ul", ['tabStyle'], submain, contents)
+        ch2=tab_menu2("ul", ['ulStyle1', 'column4'], submain, contents)
+        ch3=btn("ul", ['btnList'], submain, contents)
+        ch4=btn("div", ['btnList3'], submain, contents)
+        ch5=make_caption(submain, contents)
+        if (not ch1) and (not ch2) and (not ch3) and (not ch4) and (not ch5):
             contents.append(submain)
-    f = open("보건사업안내→" + loc + "→" + str(title) + ".html", 'w', encoding="UTF8")
+    f=open(path + "보건사업안내→" + loc + "→" + str(title) + ".html", 'w', encoding="UTF8")
     for i in contents:
         f.write(str(i))
     print("create file 보건사업안내→" + loc + "→" + str(title) + ".html")
