@@ -2,7 +2,6 @@
 #define ll long long
 #define pii pair<int,int>
 using namespace std;
-
 bool ch1[101];
 bool ch2[1001][1001];
 int a1[101];
@@ -21,21 +20,24 @@ struct point {
 };
 int t;
 int n, m, l,ans;
-int bfs(){
+int bfs(int n){
         queue<pii > q;
-        q.push({0,0});
+        q.push({0,1});
         int cnt=0;
         while(!q.empty()) {
                 t=q.size();
                 while(t--) {
-                        int x =q.front().first;
-                        int y=q.front().second;
+                        auto a =q.front();
                         q.pop();
-                        for(int i=0; i<4; i++) {
-                                int nx=x+dx[i];
-                                int ny=y+dy[i];
-                                if(ch2[nx][ny]!=true && a2[nx][ny]==0) {
-                                }
+                        if(a.second==n) {
+                                return cnt;
+                        }
+                        else if(ch2[a.first][a.second]!=true && a.second <n) {
+                                ch2[a.first][a.second]=true;
+                                q.push({a.second,a.second});
+                                q.push({a.first, a.first+a.second});
+                                if(a.second>0)
+                                        q.push({a.first,a.second-1});
                         }
                 }
                 cnt++;
@@ -45,6 +47,6 @@ int main() {
         ios_base::sync_with_stdio(false);
         cin.tie(NULL);
         cin>>n;
-        cout<<bfs();
+        cout<<bfs(n);
         return 0;
 }
