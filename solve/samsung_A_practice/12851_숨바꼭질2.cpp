@@ -16,40 +16,34 @@ void bfs(int n, int k) {
         cnt[n]=1;
         while (!q.empty()) {
                 int a = q.front();
+                if (dis[a] > dis[k] || a==k)
+                        break;
                 q.pop();
                 if (a-1>=0 && dis[a-1]>=dis[a]+1) {
-                        if(dis[a-1]==dis[a]+1) {
-                                cnt[a - 1] = cnt[a] + cnt[a-1];
-                        }
-                        else{
+                        cnt[a - 1] = cnt[a] + cnt[a-1];
+                        if(dis[a-1]>dis[a]+1) {
                                 q.push(a - 1);
                                 dis[a - 1]= dis[a]+1;
-                                cnt[a - 1] = cnt[a] + cnt[a-1];
                         }
                 }
                 if (a + 1<MAX && dis[a+1]>=dis[a]+1) {
-                        if(dis[a+1]==dis[a]+1) {
-                                cnt[a + 1] = cnt[a] + cnt[a+1];
-                        }
-                        else{
+                        cnt[a + 1] = cnt[a] + cnt[a+1];
+                        if(dis[a+1]>dis[a]+1) {
                                 q.push(a + 1);
-                                cnt[a + 1] = cnt[a] + cnt[a+1];
                                 dis[a+1]=dis[a]+1;
                         }
 
                 }
                 if (2 * a < MAX && dis[a*2]>=dis[a]+1) {
-                        if(dis[a*2]==dis[a]+1) {
-                                cnt[a *2] = cnt[a] + cnt[a*2];
-                        }
-                        else{
+                        cnt[a *2] = cnt[a] + cnt[a*2];
+                        if(dis[a*2]>dis[a]+1) {
                                 q.push(a *2);
-                                cnt[a *2] = cnt[a] + cnt[a*2];
                                 dis[a*2]=dis[a]+1;
                         }
                 }
         }
 }
+
 
 int main() {
         ios_base::sync_with_stdio(false);
