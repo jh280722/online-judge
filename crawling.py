@@ -4,9 +4,7 @@ from bs4 import BeautifulSoup
 
 path = "./new/"
 url2 = ["https://snshealth.ansan.go.kr/hcGuide/maternalChildhood/ChildbirthEncouragement.jsp?menuId=06004012"]
-url = ["http://snshealth.ansan.go.kr/hcGuide/fundholding/Fundholding.jsp?menuId=06004039",
-       "http://snshealth.ansan.go.kr/hcGuide/fundholding/Obstinacy.jsp?menuId=06004039", "http://snshealth.ansan.go.kr/hcGuide/fundholding/Hepatitis.jsp?menuId=06004039", "http://snshealth.ansan.go.kr/hcGuide/fundholding/Premature.jsp?menuId=06004039", "http://snshealth.ansan.go.kr/hcGuide/fundholding/Apriority.jsp?menuId=06004039",
-       "http://snshealth.ansan.go.kr/hcGuide/fundholding/Dementia.jsp?menuId=06004039", "http://snshealth.ansan.go.kr/hcGuide/fundholding/OldSurgery.jsp?menuId=06004039", "http://snshealth.ansan.go.kr/hcGuide/fundholding/OldEyeSurgery.jsp?menuId=06004039"]
+url = ["http://www.nipa.kr/biz/biz.it?bizId=00778&menuNo=1025"]
 num = 0
 
 
@@ -207,12 +205,12 @@ for u in url:
     r = requests.get(u)
     c = r.content
     html = BeautifulSoup(c, 'lxml')
-    content = make_templete(html, '.subMain')
+    content = make_templete(html, '.content-area')
     content = BeautifulSoup(content, 'html.parser')
-    loc = html.find("ul", class_="location")
-    loc = loc.find("li", class_="on").text
-    title = html.find(name="div", class_="subTop")
-    title = title.find(name="h3").find(name="span")
+    loc = html.find("div", class_="location")
+    loc = loc.find("a", class_="").text
+    title = html.find(name="div", class_="location")
+    title = title.find("strong").text
     if title != None:
         title = title.text
         i = len(title) - 1
