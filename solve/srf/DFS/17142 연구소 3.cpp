@@ -41,7 +41,6 @@ int bfs() {
 				if (nr < 0 || nr >= n || nc < 0 || nc >= n) continue;
 				if (visit[nr][nc] || map[nr][nc] == 1) continue;
 				if (map[nr][nc] == 0) {
-					map[nr][nc] = 3;
 					cnt--;
 				}
 				visit[nr][nc] = true;
@@ -99,18 +98,7 @@ int main() {
 				zero++;
 		}
 	}
-	bool flag = false;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			if (map[i][j] == 0) {
-				flag = true;
-				break;
-			}
-		}
-		if (flag)
-			break;
-	}
-	if (!flag) {
+	if (zero==0) {
 		cout << 0 << '\n';
 		return 0;
 	}
