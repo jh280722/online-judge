@@ -33,22 +33,19 @@ bool bfs(int r, int c) {
 	visit[r][c] = true;
 	int lev = 0;
 	while (!nq.empty()) {
-		int qs = nq.size();
-		while (qs--) {
-			r = nq.front().r;
-			c = nq.front().c;
-			nq.pop();
-			for (int k = 0; k < 4; k++) {
-				int nr = r + dr[k];
-				int nc = c + dc[k];
-				if (nr < 0 || nr >= n || nc < 0 || nc >= n || visit[nr][nc]) continue;
-				int sub = abs(map[r][c] - map[nr][nc]);
-				if (sub >= lf && sub <= rt) {
-					visit[nr][nc] = true;
-					sum += map[nr][nc];
-					v.push_back({ nr,nc });
-					nq.push({ nr,nc });
-				}
+		r = nq.front().r;
+		c = nq.front().c;
+		nq.pop();
+		for (int k = 0; k < 4; k++) {
+			int nr = r + dr[k];
+			int nc = c + dc[k];
+			if (nr < 0 || nr >= n || nc < 0 || nc >= n || visit[nr][nc]) continue;
+			int sub = abs(map[r][c] - map[nr][nc]);
+			if (sub >= lf && sub <= rt) {
+				visit[nr][nc] = true;
+				sum += map[nr][nc];
+				v.push_back({ nr,nc });
+				nq.push({ nr,nc });
 			}
 		}
 		lev++;
