@@ -1,13 +1,12 @@
 #include <bits/stdc++.h>
 #define all(v) v.begin(), v.end()
 #define pb push_back
+#define pb(a,b) push_back({a,b})
 #define fu(i,a,j) for(int i=a;i<j;i++)
 #define fd(i,a,j) for(int i=a;i>=j;i--)
-#define SYNC ios::sync_with_stdio(false),cin.tie(NULL),cout.tie(NULL)
-#define MOD 998244353
-#define MOD2 1000000021
-#define INF 1e9
-#define N 100001
+#define MOD 1000000
+#define INF 1000000000
+#define N 101
 using namespace std;
 
 typedef long long ll;
@@ -23,32 +22,28 @@ typedef vector<pll> vpll;
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 ll lcm(ll a, ll b) { return a * b / gcd(a, b); };
 int n, m, k, t;
-int dr[] = { 0,0,1,-1, -1,1,1,-1 };
-int dc[] = { -1,1,0,0, 1,1,-1,-1 };
+int dr[] = { 1,0,-1,0 };
+int dc[] = { 0,1,0,-1 };
+
+int d[31][2];
 
 int main() {
-	SYNC;
-	cin >> t;
-	while (t--) {
-		cin >> n;
-		string s;
-		cin >> s;
-		string ans;
-		int odd = 0;
-		fu(i, 0, n) {
-			if ((s[i] - '0') % 2 == 1) {
-				odd++;
-				ans += s[i];
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	cin >> n >> m;
+	d[0][1] = -INF;
+	fu(i, 1, n + 1) {
+		int a;
+		cin >> a;
+		fu(j, 0, m + 1) {
+			d[j][a-1]++;
+			if (j != 0) {
+				d[j][0] = max(d[j][0], d[j - 1][1]);
+				d[j][1] = max(d[j][1], d[j - 1][0]);
 			}
-			if (odd == 2) break;
 		}
-		if (odd != 2) {
-			cout << -1 << '\n';
-			continue;
-		}
-		cout << ans << '\n';
 	}
+	cout << max(d[m][0], d[m][1]);
 	return 0;
 }
-
-

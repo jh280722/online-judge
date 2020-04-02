@@ -4,10 +4,10 @@
 #define fu(i,a,j) for(int i=a;i<j;i++)
 #define fd(i,a,j) for(int i=a;i>=j;i--)
 #define SYNC ios::sync_with_stdio(false),cin.tie(NULL),cout.tie(NULL)
-#define MOD 998244353
+#define MOD 1000000009
 #define MOD2 1000000021
 #define INF 1e9
-#define N 100001
+#define N 5000001
 using namespace std;
 
 typedef long long ll;
@@ -26,29 +26,24 @@ int n, m, k, t;
 int dr[] = { 0,0,1,-1, -1,1,1,-1 };
 int dc[] = { -1,1,0,0, 1,1,-1,-1 };
 
+deque<pii> d;
+int ans[N];
 int main() {
 	SYNC;
-	cin >> t;
-	while (t--) {
-		cin >> n;
-		string s;
-		cin >> s;
-		string ans;
-		int odd = 0;
-		fu(i, 0, n) {
-			if ((s[i] - '0') % 2 == 1) {
-				odd++;
-				ans += s[i];
-			}
-			if (odd == 2) break;
+	cin >> n >> m;
+	fu(i, 0, n) {
+		int a;
+		cin >> a;
+		if (!d.empty() && i - d.front().second >= m) {
+			d.pop_front();
 		}
-		if (odd != 2) {
-			cout << -1 << '\n';
-			continue;
+		while (!d.empty() && d.back().first > a) {
+			d.pop_back();
 		}
-		cout << ans << '\n';
+		d.push_back({ a,i });
+		ans[i] = d.front().first;
 	}
+	fu(i, 0, n)
+		cout << ans[i] << ' ';
 	return 0;
 }
-
-

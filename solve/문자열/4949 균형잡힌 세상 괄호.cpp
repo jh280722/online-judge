@@ -4,10 +4,10 @@
 #define fu(i,a,j) for(int i=a;i<j;i++)
 #define fd(i,a,j) for(int i=a;i>=j;i--)
 #define SYNC ios::sync_with_stdio(false),cin.tie(NULL),cout.tie(NULL)
-#define MOD 998244353
+#define MOD 1e9+9
 #define MOD2 1000000021
 #define INF 1e9
-#define N 100001
+#define N 51
 using namespace std;
 
 typedef long long ll;
@@ -23,32 +23,40 @@ typedef vector<pll> vpll;
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 ll lcm(ll a, ll b) { return a * b / gcd(a, b); };
 int n, m, k, t;
-int dr[] = { 0,0,1,-1, -1,1,1,-1 };
-int dc[] = { -1,1,0,0, 1,1,-1,-1 };
-
+int dr[] = { 1,0,-1,0, -1,1,1,-1 };
+int dc[] = { 0,1,0,-1, 1,1,-1,-1 };
 int main() {
 	SYNC;
-	cin >> t;
-	while (t--) {
-		cin >> n;
+	while (true) {
 		string s;
-		cin >> s;
-		string ans;
-		int odd = 0;
-		fu(i, 0, n) {
-			if ((s[i] - '0') % 2 == 1) {
-				odd++;
-				ans += s[i];
+		getline(cin, s, '\n');
+		if (s == ".")
+			break;
+		bool y = true;
+		stack<char> s1;
+		fu(i, 0, s.size()) {
+			if (s[i] == '(' || s[i] == '[') {
+				s1.push(s[i]);
 			}
-			if (odd == 2) break;
+			else if (s[i] == ')' || s[i] == ']') {
+				if (s1.empty()) {
+					y = false;
+					break;
+				}
+				else if ((s1.top() == '(' && s[i] == ')') || (s1.top() == '[' && s[i] == ']'))
+					s1.pop();
+				else {
+					y = false;
+					break;
+				}
+			}
 		}
-		if (odd != 2) {
-			cout << -1 << '\n';
-			continue;
-		}
-		cout << ans << '\n';
+		if (!s1.empty())
+			y = false;
+		if (y)
+			cout << "yes\n";
+		else
+			cout << "no\n";
 	}
 	return 0;
 }
-
-

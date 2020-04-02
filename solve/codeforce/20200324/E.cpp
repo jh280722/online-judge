@@ -7,7 +7,7 @@
 #define MOD 998244353
 #define MOD2 1000000021
 #define INF 1e9
-#define N 100001
+#define N 200001
 using namespace std;
 
 typedef long long ll;
@@ -26,29 +26,26 @@ int n, m, k, t;
 int dr[] = { 0,0,1,-1, -1,1,1,-1 };
 int dc[] = { -1,1,0,0, 1,1,-1,-1 };
 
+ll ans[N];
+ll ten_pow[N];
+
 int main() {
 	SYNC;
-	cin >> t;
-	while (t--) {
-		cin >> n;
-		string s;
-		cin >> s;
-		string ans;
-		int odd = 0;
-		fu(i, 0, n) {
-			if ((s[i] - '0') % 2 == 1) {
-				odd++;
-				ans += s[i];
-			}
-			if (odd == 2) break;
-		}
-		if (odd != 2) {
-			cout << -1 << '\n';
-			continue;
-		}
-		cout << ans << '\n';
+	cin >> n;
+	ten_pow[0] = 1;
+	fu(i, 1, n + 1)
+		ten_pow[i] = ten_pow[i - 1] * 10 % MOD;
+	fu(i,1,n) {
+		if (i <= n - 2)
+			ans[i] = (ll)81 * ten_pow[n - i - 2] % MOD * (n - i - 1) % MOD;
+		ans[i] = (ans[i] + 9 * ten_pow[n - i - 1] * 2) % MOD;
+	}
+	ans[n] = 1;
+	fu(i, 1, n+1) {
+		ans[i] = (ans[i] * 10) % MOD;
+	}
+	fu(i, 1, n+1) {
+		cout << ans[i] << ' ';
 	}
 	return 0;
 }
-
-

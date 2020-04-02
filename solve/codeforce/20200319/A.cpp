@@ -3,11 +3,9 @@
 #define pb push_back
 #define fu(i,a,j) for(int i=a;i<j;i++)
 #define fd(i,a,j) for(int i=a;i>=j;i--)
-#define SYNC ios::sync_with_stdio(false),cin.tie(NULL),cout.tie(NULL)
 #define MOD 998244353
-#define MOD2 1000000021
-#define INF 1e9
-#define N 100001
+#define INF 1000000000
+#define N 200001
 using namespace std;
 
 typedef long long ll;
@@ -23,32 +21,31 @@ typedef vector<pll> vpll;
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 ll lcm(ll a, ll b) { return a * b / gcd(a, b); };
 int n, m, k, t;
-int dr[] = { 0,0,1,-1, -1,1,1,-1 };
-int dc[] = { -1,1,0,0, 1,1,-1,-1 };
-
+int dr[] = { 1,0,-1,0 };
+int dc[] = { 0,1,0,-1 };
+pll a[N];
+ll idx[N];
 int main() {
-	SYNC;
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
 	cin >> t;
 	while (t--) {
 		cin >> n;
-		string s;
-		cin >> s;
-		string ans;
-		int odd = 0;
-		fu(i, 0, n) {
-			if ((s[i] - '0') % 2 == 1) {
-				odd++;
-				ans += s[i];
-			}
-			if (odd == 2) break;
-		}
-		if (odd != 2) {
+		if (n == 1) {
 			cout << -1 << '\n';
 			continue;
 		}
-		cout << ans << '\n';
+		string s;
+		s += '3';
+		if (2 * (n - 1) % 3 == 0)
+			s += '4';
+		else
+			s += '2';
+		fu(i, 0, n - 2)
+			s += '2';
+		reverse(all(s));
+		cout << s << '\n';
 	}
 	return 0;
 }
-
-
